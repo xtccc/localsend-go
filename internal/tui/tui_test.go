@@ -28,7 +28,7 @@ func TestSelectDevice(t *testing.T) {
 	}()
 
 	// 调用 SelectDevice 函数
-	ip, err := SelectDevice(updates)
+	device, err := SelectDevice(updates)
 	if err != nil {
 		t.Fatalf("SelectDevice returned an error: %v", err)
 	}
@@ -39,7 +39,7 @@ func TestSelectDevice(t *testing.T) {
 		"192.168.1.2": true,
 		"192.168.1.3": true,
 	}
-	if !expectedIPs[ip] {
-		t.Fatalf("SelectDevice returned an unexpected IP: %s", ip)
+	if !expectedIPs[device.IP] {
+		t.Fatalf("SelectDevice returned an unexpected IP: %s", device.IP)
 	}
 }

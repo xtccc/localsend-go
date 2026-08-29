@@ -28,9 +28,10 @@ func ListenForHttpBroadCast(updates chan<- []models.SendModel) {
 
 		ips, err := pingScan()
 		if err != nil {
-			logger.Errorf("Failed to discover devices via ping scan: %v", err)
+			logger.Errorf("[HttpBroadcast] pingScan failed: %v", err)
 			continue
 		}
+		logger.Debugf("[HttpBroadcast] pingScan found %d ips: %v", len(ips), ips)
 
 		var wg sync.WaitGroup
 		for _, ip := range ips {
@@ -54,22 +55,34 @@ func ListenForHttpBroadCast(updates chan<- []models.SendModel) {
 
 				resp, err := client.Do(req)
 				if err != nil {
+					logger.Debugf("[HttpBroadcast] POST register to %s failed: %v", ip, err)
 					return
 				}
 				defer resp.Body.Close()
+				logger.Debugf("[HttpBroadcast] POST register to %s status=%d", ip, resp.StatusCode)
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					logger.Errorf("Failed to read HTTP response body from %s: %v", ip, err)
+					logger.Errorf("[HttpBroadcast] read body from %s failed: %v", ip, err)
+					return
+				}
+				if resp.StatusCode != http.StatusOK {
+					logger.Debugf("[HttpBroadcast] non-200 from %s status=%d body=%q", ip, resp.StatusCode, string(body))
 					return
 				}
 
 				var response models.BroadcastMessage
 				if err := json.Unmarshal(body, &response); err != nil {
-					logger.Errorf("Failed to parse HTTP response from %s: %v", ip, err)
+					logger.Errorf("[HttpBroadcast] parse response from %s failed: %v body=%q", ip, err, string(body))
 					return
 				}
+				logger.Debugf("[HttpBroadcast] discovered via http %s alias=%q model=%q", ip, response.Alias, response.DeviceModel)
 
+				// 过滤本机 IP
+				if IsLocalIP(ip) {
+					logger.Debugf("[HttpBroadcast] ignoring self ip %s", ip)
+					return
+				}
 				response.LastSeen = time.Now()
 
 				shared.DevicesMutex.Lock()
@@ -83,15 +96,22 @@ func ListenForHttpBroadCast(updates chan<- []models.SendModel) {
 		shared.DevicesMutex.RLock()
 		devices := make([]models.SendModel, 0, len(shared.DiscoveredDevices))
 		for ip, device := range shared.DiscoveredDevices {
+			if IsLocalIP(ip) {
+				continue
+			}
 			devices = append(devices, models.SendModel{
 				IP:         ip,
 				DeviceName: device.Alias,
+				Port:       device.Port,
+				Protocol:   device.Protocol,
 			})
 		}
 		shared.DevicesMutex.RUnlock()
+		logger.Debugf("[HttpBroadcast] total discovered devices %d: %v", len(devices), devices)
 
 		select {
 		case updates <- devices:
+			logger.Debugf("[HttpBroadcast] sent updates %d devices", len(devices))
 		default:
 			logger.Debug("Updates channel is full, skipping update")
 		}

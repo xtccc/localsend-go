@@ -36,7 +36,7 @@ var (
 func DefaultConfig() LogConfig {
 	return LogConfig{
 		Level:  logrus.InfoLevel,
-		Output: os.Stdout,
+		Output: os.Stderr,
 		Formatter: &logrus.TextFormatter{
 			FullTimestamp: true,
 			ForceColors:   true,
@@ -74,6 +74,30 @@ func checkLogger() {
 func GetLogger() *Logger {
 	checkLogger()
 	return logger
+}
+
+// SetLevel 动态设置日志级别（支持在 InitLogger 之后切换到 debug）
+func SetLevel(level logrus.Level) {
+	checkLogger()
+	logger.SetLevel(level)
+}
+
+// IsDebugEnabled 判断是否为 debug 级别
+func IsDebugEnabled() bool {
+	checkLogger()
+	return logger.IsLevelEnabled(logrus.DebugLevel)
+}
+
+// SetOutput 动态设置日志输出（用于 TUI 期间重定向到文件）
+func SetOutput(w io.Writer) {
+	checkLogger()
+	logger.SetOutput(w)
+}
+
+// GetOutput 获取当前日志输出
+func GetOutput() io.Writer {
+	checkLogger()
+	return logger.Out
 }
 
 // Success 打印带有绿色 [Success] 标签的信息

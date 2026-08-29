@@ -2,15 +2,41 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/meowrain/localsend-go/internal/models"
+	"github.com/meowrain/localsend-go/internal/utils/logger"
 
 	bubbletea "github.com/charmbracelet/bubbletea"
 )
 
 // selectDevice 使用 Bubble Tea 库显示可供选择的设备列表并等待用户选择
-func SelectDevice(updates <-chan []models.SendModel) (string, error) {
+// 返回选中的设备完整信息（包含 Protocol/Port），调用方应据此构造 URL
+func SelectDevice(updates <-chan []models.SendModel) (models.SendModel, error) {
+	// 方案B：--debug 时将日志落盘，避免 TUI 与 logger 抢终端导致折行
+	var logFile *os.File
+	var origOut = logger.GetOutput()
+	if logger.IsDebugEnabled() {
+		f, err := os.OpenFile("debug.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err == nil {
+			logFile = f
+			logger.SetOutput(f)
+			// 同时让 bubbletea 的调试日志也落盘（若有）
+			// 注意：defer 在此函数结束时恢复
+			defer func() {
+				_ = f.Sync()
+				logger.SetOutput(origOut)
+				_ = f.Close()
+				logger.Infof("[TUI] debug logs during device selection written to debug.log")
+			}()
+			logger.Debugf("[TUI] debug logging redirected to debug.log during device selection")
+		} else {
+			logger.Warnf("[TUI] failed to open debug.log: %v", err)
+		}
+	}
+	_ = logFile // 避免未使用警告（仅 debug 时使用）
+
 	// 创建一个带缓冲的内部 channel
 	internalUpdates := make(chan []models.SendModel, 100)
 
@@ -43,13 +69,13 @@ func SelectDevice(updates <-chan []models.SendModel) (string, error) {
 	cmd := bubbletea.NewProgram(initModel)
 	m, err := cmd.Run()
 	if err != nil {
-		return "", err
+		return models.SendModel{}, err
 	}
 
 	if m, ok := m.(model); ok && len(m.devices) > 0 {
-		return m.devices[m.cursor].IP, nil
+		return m.devices[m.cursor], nil
 	}
-	return "", nil
+	return models.SendModel{}, nil
 }
 
 // model 结构体用于 Bubble Tea

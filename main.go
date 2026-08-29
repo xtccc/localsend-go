@@ -19,6 +19,7 @@ import (
 	"github.com/meowrain/localsend-go/internal/pkg/server"
 	"github.com/meowrain/localsend-go/internal/utils/logger"
 	"github.com/meowrain/localsend-go/static"
+	"github.com/sirupsen/logrus"
 	qrcode "github.com/skip2/go-qrcode"
 )
 
@@ -379,10 +380,35 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 		fmt.Println("Options:")
 		fmt.Println("  --help              Display this help information")
 		fmt.Println("  --port=<number>     Specify server port (default: 53317)")
+		fmt.Println("  --debug             Enable debug logging (verbose)")
 	}
 	flag.Usage = showHelp
+	// 兼容 --debug 写法（Go flag 仅识别单横线，手动归一化）
+	for i, arg := range os.Args {
+		if arg == "--debug" {
+			os.Args[i] = "-debug"
+		}
+		if arg == "--port" {
+			os.Args[i] = "-port"
+		}
+	}
 	// 解析标准flag参数
 	flag.Parse()
+
+	// 应用 --debug 日志级别（flagParse 之后，覆盖 early init，兼容 --debug 在任意位置）
+	isDebugFlag := debug
+	if !isDebugFlag {
+		for _, a := range os.Args {
+			if a == "--debug" || a == "-debug" {
+				isDebugFlag = true
+				break
+			}
+		}
+	}
+	if isDebugFlag {
+		logger.SetLevel(logrus.DebugLevel)
+		logger.Debug("Debug logging enabled via --debug flag")
+	}
 
 	// 检查是否有 --help 参数
 	for _, arg := range os.Args {
@@ -392,17 +418,51 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 		}
 	}
 
-	if len(os.Args) > 1 {
+	// 统一通过过滤 os.Args 获取非 flag 参数，兼容 --debug 在任意位置
+	filtered := []string{}
+	skipNext := false
+	for _, a := range os.Args[1:] {
+		if skipNext {
+			skipNext = false
+			continue
+		}
+		if a == "-debug" || a == "--debug" {
+			continue
+		}
+		if a == "-h" || a == "--help" {
+			continue
+		}
+		if strings.HasPrefix(a, "-port=") || strings.HasPrefix(a, "--port=") {
+			continue
+		}
+		if a == "-port" || a == "--port" {
+			skipNext = true
+			continue
+		}
+		if strings.HasPrefix(a, "-") {
+			// 未知 flag，跳过
+			continue
+		}
+		filtered = append(filtered, a)
+	}
+	// 也兼容 flag.Args（若用户使用标准 flag 位置）
+	args := flag.Args()
+	// 优先使用 filtered，若为空则回退到 flag.Args
+	positional := filtered
+	if len(positional) == 0 && len(args) > 0 {
+		positional = args
+	}
+	if len(positional) > 0 {
 		*flagOpen = true
-		mode := os.Args[1]
+		mode := positional[0]
 
 		switch mode {
 		case "web":
 			WebServerMode(httpServer, port)
 		case "send":
 			filePath := ""
-			if len(os.Args) > 2 {
-				filePath = os.Args[2]
+			if len(positional) > 1 {
+				filePath = positional[1]
 				SendMode(filePath)
 			} else {
 				logger.Error("Need file path")
@@ -413,14 +473,22 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 		case "help":
 			showHelp()
 			ExitMode()
+		default:
+			logger.Warnf("Unknown command %q, showing help", mode)
+			showHelp()
+			ExitMode()
 		}
 	}
 }
 
-var port int
+var (
+	port  int
+	debug bool
+)
 
 func init() {
 	flag.IntVar(&port, "port", 53317, "Port to listen on")
+	flag.BoolVar(&debug, "debug", false, "Enable debug logging (verbose)")
 }
 
 func main() {
@@ -433,6 +501,13 @@ func main() {
 		os.Exit(0)
 	}()
 	logger.InitLogger()
+	// 提早探测 --debug，确保 Server started 之前的 debug 也可见
+	for _, a := range os.Args {
+		if a == "--debug" || a == "-debug" {
+			logger.SetLevel(logrus.DebugLevel)
+			break
+		}
+	}
 
 	// Start HTTP server
 	httpServer := server.New()

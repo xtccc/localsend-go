@@ -57,17 +57,59 @@ func ListenForUDPBroadcasts(updates chan<- []models.SendModel) {
 
 		logger.Debugf("Parsed message from %s: %+v", remoteAddr.IP.String(), message)
 
-		shared.DevicesMutex.Lock()
-		shared.DiscoveredDevices[remoteAddr.IP.String()] = message
+		// 过滤本机 IP，避免自发现
+		if IsLocalIP(remoteAddr.IP.String()) {
+			logger.Debugf("Ignoring self broadcast from %s", remoteAddr.IP.String())
+		} else {
+			shared.DevicesMutex.Lock()
+			shared.DiscoveredDevices[remoteAddr.IP.String()] = message
 
+			devices := make([]models.SendModel, 0, len(shared.DiscoveredDevices))
+			for ip, device := range shared.DiscoveredDevices {
+				devices = append(devices, models.SendModel{
+					IP:         ip,
+					DeviceName: device.Alias,
+					Port:       device.Port,
+					Protocol:   device.Protocol,
+				})
+			}
+			shared.DevicesMutex.Unlock()
+
+			logger.Debugf("Updated devices list: %+v", devices)
+
+			select {
+			case updates <- devices:
+				logger.Debug("Successfully sent device updates")
+			default:
+				logger.Debug("Updates channel is full, skipping update")
+			}
+			continue
+		}
+		// 即使是本机，也定期清理过期设备后推送一次，避免 TUI 卡住
+		shared.DevicesMutex.RLock()
 		devices := make([]models.SendModel, 0, len(shared.DiscoveredDevices))
 		for ip, device := range shared.DiscoveredDevices {
+			// 再次过滤本机
+			if IsLocalIP(ip) {
+				continue
+			}
 			devices = append(devices, models.SendModel{
 				IP:         ip,
 				DeviceName: device.Alias,
+				Port:       device.Port,
+				Protocol:   device.Protocol,
 			})
 		}
-		shared.DevicesMutex.Unlock()
+		shared.DevicesMutex.RUnlock()
+
+		logger.Debugf("Updated devices list (filtered self): %+v", devices)
+
+		select {
+		case updates <- devices:
+			logger.Debug("Successfully sent device updates")
+		default:
+			logger.Debug("Updates channel is full, skipping update")
+		}
 
 		logger.Debugf("Updated devices list: %+v", devices)
 
@@ -94,7 +136,7 @@ func StartUDPBroadcast() {
 	}
 	defer conn.Close()
 
-	logger.Info("Started UDP broadcast")
+	logger.Infof("Started UDP broadcast with message alias=%q fingerprint=%q model=%q", shared.Message.Alias, shared.Message.Fingerprint, shared.Message.DeviceModel)
 
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
@@ -136,7 +178,7 @@ func StartUDPBroadcast() {
 			continue
 		}
 
-		logger.Debug("Sent UDP broadcast")
+		logger.Debugf("Sent UDP broadcast data=%s", string(data))
 		failCount = 0 // 成功发送后重置失败计数器
 	}
 }

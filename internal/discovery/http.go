@@ -42,8 +42,10 @@ func pingScan() ([]string, error) {
 	var ips []string
 	ipGroup, err := GetLocalIP()
 	if err != nil {
+		logger.Errorf("[pingScan] GetLocalIP failed: %v", err)
 		return nil, err
 	}
+	logger.Debugf("[pingScan] local IP groups=%v", ipGroup)
 	for _, i := range ipGroup {
 		ip := i.Mask(net.IPv4Mask(255, 255, 255, 0)) // 假设是 24 子网掩码
 		ip4 := ip.To4()
@@ -63,7 +65,7 @@ func pingScan() ([]string, error) {
 				defer wg.Done()
 				pinger, err := probing.NewPinger(ip)
 				if err != nil {
-					logger.Errorf("Failed to create pinger:", err)
+					logger.Errorf("Failed to create pinger: %v", err)
 					return
 				}
 				pinger.SetPrivileged(true)
@@ -84,6 +86,22 @@ func pingScan() ([]string, error) {
 		}
 
 		wg.Wait()
+		logger.Debugf("[pingScan] subnet scan done ip=%v found %d active hosts", ip, len(ips))
 	}
+	logger.Debugf("[pingScan] total discovered %d hosts: %v", len(ips), ips)
 	return ips, nil
+}
+
+// IsLocalIP 判断是否为本机 IP
+func IsLocalIP(ipStr string) bool {
+	ips, err := GetLocalIP()
+	if err != nil {
+		return false
+	}
+	for _, ip := range ips {
+		if ip.String() == ipStr {
+			return true
+		}
+	}
+	return false
 }
