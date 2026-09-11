@@ -88,6 +88,19 @@ yay -S localsend-go
        <img src="https://blog.meowrain.cn/api/i/2025/02/09/YjbG9f1739113834583691367.avif" width="80%" />
    </div>
 
+### 命令行用法
+
+除了交互式界面，也支持直接通过命令行指定参数：
+
+```bash
+localsend_go web                    # 启动 Web 模式
+localsend_go send <file_path>       # 发送文件（交互式选择设备）
+localsend_go send <file_path> --ip=<device_ip>   # 直接发送到指定 IP，跳过设备选择
+localsend_go receive                # 接收文件
+```
+
+指定 `--ip` 时会先探测对端 `/api/localsend/v2/info` 获取端口与协议，探测失败则回退到 `http://<ip>:53317`。
+
 ### 特殊说明
 
 Linux系统需要额外配置ping权限：

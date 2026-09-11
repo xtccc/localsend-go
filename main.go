@@ -357,8 +357,8 @@ func ReceiveMode() {
 	select {}
 }
 
-func SendMode(filePath string) {
-	err := handlers.SendFile(filePath)
+func SendMode(filePath string, targetIP string) {
+	err := handlers.SendFile(filePath, targetIP)
 	if err != nil {
 		logger.Errorf("Send failed: %v", err)
 	}
@@ -380,6 +380,7 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 		fmt.Println("Options:")
 		fmt.Println("  --help              Display this help information")
 		fmt.Println("  --port=<number>     Specify server port (default: 53317)")
+		fmt.Println("  --ip=<ip>           Send directly to the given device IP (skip interactive selection)")
 		fmt.Println("  --debug             Enable debug logging (verbose)")
 	}
 	flag.Usage = showHelp
@@ -394,6 +395,20 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 	}
 	// 解析标准flag参数
 	flag.Parse()
+
+	// 手动解析 --ip（兼容 --ip 位于子命令之后，flag.Parse 遇到子命令会停止解析）
+	for i, a := range os.Args {
+		if strings.HasPrefix(a, "-ip=") || strings.HasPrefix(a, "--ip=") {
+			targetIP = a[strings.Index(a, "=")+1:]
+			break
+		}
+		if a == "-ip" || a == "--ip" {
+			if i+1 < len(os.Args) {
+				targetIP = os.Args[i+1]
+			}
+			break
+		}
+	}
 
 	// 应用 --debug 日志级别（flagParse 之后，覆盖 early init，兼容 --debug 在任意位置）
 	isDebugFlag := debug
@@ -439,6 +454,13 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 			skipNext = true
 			continue
 		}
+		if strings.HasPrefix(a, "-ip=") || strings.HasPrefix(a, "--ip=") {
+			continue
+		}
+		if a == "-ip" || a == "--ip" {
+			skipNext = true
+			continue
+		}
 		if strings.HasPrefix(a, "-") {
 			// 未知 flag，跳过
 			continue
@@ -463,7 +485,7 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 			filePath := ""
 			if len(positional) > 1 {
 				filePath = positional[1]
-				SendMode(filePath)
+				SendMode(filePath, targetIP)
 			} else {
 				logger.Error("Need file path")
 				ExitMode()
@@ -482,13 +504,15 @@ func flagParse(httpServer *http.ServeMux, port int, flagOpen *bool) {
 }
 
 var (
-	port  int
-	debug bool
+	port     int
+	debug    bool
+	targetIP string
 )
 
 func init() {
 	flag.IntVar(&port, "port", 53317, "Port to listen on")
 	flag.BoolVar(&debug, "debug", false, "Enable debug logging (verbose)")
+	flag.StringVar(&targetIP, "ip", "", "Target device IP for send mode (skip interactive selection)")
 }
 
 func main() {
@@ -549,7 +573,7 @@ func main() {
 				fmt.Println("Send mode requires a file path")
 				os.Exit(1)
 			}
-			SendMode(filePath)
+			SendMode(filePath, "")
 		}
 
 		if mode == "📥 Receive" {

@@ -96,6 +96,19 @@ The compiled binaries will be saved in the `bin` directory.
        <img src="https://blog.meowrain.cn/api/i/2025/02/09/YjbG9f1739113834583691367.avif" width="80%" />
    </div>
 
+### Command Line Usage
+
+Besides the interactive TUI, arguments can be passed directly on the command line:
+
+```bash
+localsend_go web                    # Start Web mode
+localsend_go send <file_path>       # Send a file (select device interactively)
+localsend_go send <file_path> --ip=<device_ip>   # Send directly to the given IP, skipping selection
+localsend_go receive                # Receive files
+```
+
+When `--ip` is given, the tool first probes the peer's `/api/localsend/v2/info` to obtain its port and protocol, falling back to `http://<ip>:53317` if the probe fails.
+
 ### Special Notes
 
 Linux systems require additional ping permission configuration:

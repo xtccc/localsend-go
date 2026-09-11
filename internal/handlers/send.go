@@ -312,16 +312,26 @@ func uploadFile(ctx context.Context, device models.SendModel, sessionId, fileId,
 }
 
 // SendFile 函数
-func SendFile(path string) error {
-	logger.Infof("[SendFile] start path=%q", path)
-	updates := make(chan []models.SendModel)
-	discovery.ListenAndStartBroadcasts(updates)
-	fmt.Println("Please select a device you want to send file to:")
-	device, err := tui.SelectDevice(updates)
-	if err != nil {
-		logger.Errorf("[SendFile] SelectDevice failed: %v", err)
-		return err
+// targetIP 非空时直接向指定 IP 发送，跳过设备发现与交互式选择
+func SendFile(path string, targetIP string) error {
+	logger.Infof("[SendFile] start path=%q targetIP=%q", path, targetIP)
+
+	var device models.SendModel
+	if targetIP != "" {
+		device = discovery.GetDeviceByIP(targetIP)
+		logger.Infof("[SendFile] using specified device ip=%s protocol=%s port=%d", device.IP, device.Protocol, device.Port)
+	} else {
+		updates := make(chan []models.SendModel)
+		discovery.ListenAndStartBroadcasts(updates)
+		fmt.Println("Please select a device you want to send file to:")
+		selected, err := tui.SelectDevice(updates)
+		if err != nil {
+			logger.Errorf("[SendFile] SelectDevice failed: %v", err)
+			return err
+		}
+		device = selected
 	}
+
 	ip := device.IP
 	if device.Protocol == "" {
 		device.Protocol = "https"
