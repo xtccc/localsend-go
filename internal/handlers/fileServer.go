@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meowrain/localsend-go/templates"
+	"github.com/xtccc/localsend-go/templates"
 )
 
 const uploadDir = "./uploads"

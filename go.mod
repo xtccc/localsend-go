@@ -1,4 +1,4 @@
-module github.com/meowrain/localsend-go
+module github.com/xtccc/localsend-go
 
 go 1.22
 

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 
-	"github.com/meowrain/localsend-go/internal/discovery/shared"
+	"github.com/xtccc/localsend-go/internal/discovery/shared"
 )
 
 func GetInfoHandler(w http.ResponseWriter, r *http.Request) {

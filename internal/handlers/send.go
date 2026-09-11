@@ -13,13 +13,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/discovery"
-	"github.com/meowrain/localsend-go/internal/discovery/shared"
-	"github.com/meowrain/localsend-go/internal/models"
-	"github.com/meowrain/localsend-go/internal/tui"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
-	"github.com/meowrain/localsend-go/internal/utils/sha256"
 	"github.com/schollz/progressbar/v3"
+	"github.com/xtccc/localsend-go/internal/discovery"
+	"github.com/xtccc/localsend-go/internal/discovery/shared"
+	"github.com/xtccc/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/tui"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/utils/sha256"
 )
 
 // SendFileToOtherDevicePrepare 函数

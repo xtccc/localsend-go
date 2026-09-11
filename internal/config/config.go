@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 	"gopkg.in/yaml.v2"
 )
 

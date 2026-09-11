@@ -3,9 +3,9 @@ package shared
 import (
 	"sync"
 
-	"github.com/meowrain/localsend-go/internal/config"
-	"github.com/meowrain/localsend-go/internal/models"
-	"github.com/meowrain/localsend-go/internal/utils"
+	"github.com/xtccc/localsend-go/internal/config"
+	"github.com/xtccc/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/utils"
 )
 
 // 全局设备记录哈希表和互斥锁,Message信息

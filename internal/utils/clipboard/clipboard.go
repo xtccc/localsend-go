@@ -2,7 +2,7 @@ package clipboard
 
 import (
 	clipboard "github.com/atotto/clipboard"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 )
 
 func WriteToClipBoard(text string) {

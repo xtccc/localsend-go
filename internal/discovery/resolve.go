@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/models"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 )
 
 // defaultDevicePort 是 LocalSend 协议默认的 HTTP(S) 服务端口

@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/models"
 
-	"github.com/meowrain/localsend-go/internal/utils/clipboard"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
 	"github.com/schollz/progressbar/v3"
+	"github.com/xtccc/localsend-go/internal/utils/clipboard"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 )
 
 var (

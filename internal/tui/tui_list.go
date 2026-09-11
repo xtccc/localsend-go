@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/models"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 
 	bubbletea "github.com/charmbracelet/bubbletea"
 )

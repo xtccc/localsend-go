@@ -6,9 +6,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/meowrain/localsend-go/internal/discovery/shared"
-	"github.com/meowrain/localsend-go/internal/models"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/internal/discovery/shared"
+	"github.com/xtccc/localsend-go/internal/models"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
 )
 
 func ListenForUDPBroadcasts(updates chan<- []models.SendModel) {

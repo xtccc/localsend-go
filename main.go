@@ -13,14 +13,14 @@ import (
 
 	bubbletea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/meowrain/localsend-go/internal/config"
-	"github.com/meowrain/localsend-go/internal/discovery"
-	"github.com/meowrain/localsend-go/internal/handlers"
-	"github.com/meowrain/localsend-go/internal/pkg/server"
-	"github.com/meowrain/localsend-go/internal/utils/logger"
-	"github.com/meowrain/localsend-go/static"
 	"github.com/sirupsen/logrus"
 	qrcode "github.com/skip2/go-qrcode"
+	"github.com/xtccc/localsend-go/internal/config"
+	"github.com/xtccc/localsend-go/internal/discovery"
+	"github.com/xtccc/localsend-go/internal/handlers"
+	"github.com/xtccc/localsend-go/internal/pkg/server"
+	"github.com/xtccc/localsend-go/internal/utils/logger"
+	"github.com/xtccc/localsend-go/static"
 )
 
 type textInputModel struct {

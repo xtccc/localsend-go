@@ -1,4 +1,4 @@
-# Maintainer: meowrain <meowrain@126.com>
+# Maintainer: xtccc <small_parking@outlook.com>
 # Contributor: ilius <saeedgnu@riseup.net>
 
 pkgname=localsend-go
@@ -6,7 +6,7 @@ pkgver=1.2.5
 pkgrel=1
 pkgdesc="CLI implementation of LocalSend protocol in Go"
 arch=('x86_64' 'aarch64' 'armv7h' 'riscv64')
-url="https://github.com/meowrain/localsend-go"
+url="https://github.com/xtccc/localsend-go"
 license=('MIT')
 depends=('glibc')
 makedepends=('go')
