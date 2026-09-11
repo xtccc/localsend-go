@@ -23,14 +23,6 @@
 go install github.com/xtccc/localsend-go@latest
 ```
 
-### 从包管理器安装 | Install from Package Manager | パッケージマネージャーからインストール
-
-#### Arch Linux
-```bash
-yay -Syy
-yay -S localsend-go
-```
-
 ### 从源码编译 | Build from Source | ソースからビルド
 
 ```bash

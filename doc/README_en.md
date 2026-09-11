@@ -29,16 +29,6 @@ The following documentation is for version v1.2.0.
 
 ## Installation
 
-### Package Manager
-
-#### Arch Linux
-> ⚠️ Note: The arch package is still on version 1.1.0
-
-```bash
-yay -Syy
-yay -S localsend-go
-```
-
 ### Build from Source
 
 1. Ensure Go 1.22 or higher is installed

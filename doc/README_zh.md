@@ -21,16 +21,6 @@ LocalSend Go 是一个使用Go语言实现的LocalSend协议命令行工具，�
 
 ## 安装方法
 
-### 从包管理器安装
-
-#### Arch Linux
-> ⚠️ arch包还没有更新，还是第一版
-
-```bash
-yay -Syy
-yay -S localsend-go
-```
-
 ### 从源码编译
 
 1. 确保已安装Go 1.22或更高版本

@@ -29,16 +29,6 @@ LocalSend Goは、Go言語で実装されたLocalSendプロトコルのコマン
 
 ## インストール
 
-### パッケージマネージャーから
-
-#### Arch Linux
-> ⚠️ 注意：archパッケージはまだバージョン1.1.0です
-
-```bash
-yay -Syy
-yay -S localsend-go
-```
-
 ### ソースからビルド
 
 1. Go 1.22以上がインストールされていることを確認
