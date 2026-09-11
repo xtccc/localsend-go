@@ -36,8 +36,8 @@ yay -S localsend-go
 1. 确保已安装Go 1.22或更高版本
 2. 克隆仓库
    ```bash
-   git clone https://github.com/meowrain/localsend_cli.git
-   cd localsend_cli
+   git clone https://github.com/xtccc/localsend-go.git
+   cd localsend-go
    ```
 
 3. 编译
@@ -146,7 +146,7 @@ sudo setcap cap_net_raw=+ep localsend_cli
 ## Star History
 
 <div align="center">
-    <a href="https://star-history.com/#meowrain/localsend-go&Date">
-        <img src="https://api.star-history.com/svg?repos=meowrain/localsend-go&type=Date" width="80%" />
+    <a href="https://star-history.com/#xtccc/localsend-go&Date">
+        <img src="https://api.star-history.com/svg?repos=xtccc/localsend-go&type=Date" width="80%" />
     </a>
 </div>

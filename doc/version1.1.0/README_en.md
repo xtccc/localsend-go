@@ -20,8 +20,8 @@
 ### Clone the Repository
 
 ```sh
-git clone --branch v1.1.0 https://github.com/meowrain/localsend-go.git
-cd localsend_cli
+git clone --branch v1.1.0 https://github.com/xtccc/localsend-go.git
+cd localsend-go
 ```
 
 ### Build

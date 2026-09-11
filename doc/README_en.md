@@ -44,8 +44,8 @@ yay -S localsend-go
 1. Ensure Go 1.22 or higher is installed
 2. Clone the repository
    ```bash
-   git clone https://github.com/meowrain/localsend_cli.git
-   cd localsend_cli
+   git clone https://github.com/xtccc/localsend-go.git
+   cd localsend-go
    ```
 
 3. Build
@@ -154,7 +154,7 @@ This project is licensed under the [MIT](../LICENSE) License.
 ## Star History
 
 <div align="center">
-    <a href="https://star-history.com/#meowrain/localsend-go&Date">
-        <img src="https://api.star-history.com/svg?repos=meowrain/localsend-go&type=Date" width="80%" />
+    <a href="https://star-history.com/#xtccc/localsend-go&Date">
+        <img src="https://api.star-history.com/svg?repos=xtccc/localsend-go&type=Date" width="80%" />
     </a>
 </div>

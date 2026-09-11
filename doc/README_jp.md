@@ -44,8 +44,8 @@ yay -S localsend-go
 1. Go 1.22以上がインストールされていることを確認
 2. リポジトリをクローン
    ```bash
-   git clone https://github.com/meowrain/localsend_cli.git
-   cd localsend_cli
+   git clone https://github.com/xtccc/localsend-go.git
+   cd localsend-go
    ```
 
 3. ビルド
@@ -141,7 +141,7 @@ IssueやPull Requestを歓迎します。貢献する際は以下の点に注意
 ## Star History
 
 <div align="center">
-    <a href="https://star-history.com/#meowrain/localsend-go&Date">
-        <img src="https://api.star-history.com/svg?repos=meowrain/localsend-go&type=Date" width="80%" />
+    <a href="https://star-history.com/#xtccc/localsend-go&Date">
+        <img src="https://api.star-history.com/svg?repos=xtccc/localsend-go&type=Date" width="80%" />
     </a>
 </div>

@@ -20,7 +20,7 @@
 ### 使用go install安装
 
 ```bash
-go install github.com/meowrain/localsend-go@latest
+go install github.com/xtccc/localsend-go@latest
 ```
 
 ### 从包管理器安装 | Install from Package Manager | パッケージマネージャーからインストール
@@ -34,13 +34,13 @@ yay -S localsend-go
 ### 从源码编译 | Build from Source | ソースからビルド
 
 ```bash
-git clone https://github.com/meowrain/localsend_cli.git
-cd localsend_cli
+git clone https://github.com/xtccc/localsend-go.git
+cd localsend-go
 make build
 ```
 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=meowrain/localsend-go&type=Date)](https://www.star-history.com/#meowrain/localsend-go&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=xtccc/localsend-go&type=Date)](https://www.star-history.com/#xtccc/localsend-go&Date)
 
